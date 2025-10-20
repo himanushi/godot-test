@@ -3,13 +3,14 @@
 [ext_resource type="Texture2D" uid="uid://dv6rx85s1gy3i" path="res://assets/ballBlue_10.png" id="1"]
 
 [sub_resource type="PhysicsMaterial" id="1"]
+bounce = 0.5
 
 [sub_resource type="CircleShape2D" id="2"]
 radius = 37.1452
 
 [node name="Ball" type="RigidBody2D"]
 physics_material_override = SubResource("1")
-gravity_scale = 4.0
+gravity_scale = 10.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.5, 0.5)
