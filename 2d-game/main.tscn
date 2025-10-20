@@ -37,8 +37,11 @@ curve = SubResource("Curve2D_7dm0k")
 [node name="HUD" parent="." instance=ExtResource("4_1bvp3")]
 
 [node name="ColorRect" type="ColorRect" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.38322315, 0.59625524, 0.5342495, 1)
 
 [connection signal="hit" from="Player" to="." method="_on_player_hit"]
