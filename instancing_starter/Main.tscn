@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://bc04jgq832nvc"]
+[gd_scene load_steps=15 format=3 uid="uid://bc04jgq832nvc"]
 
-[ext_resource type="Script" path="res://Main.gd" id="1"]
+[ext_resource type="Script" uid="uid://dg6y7l7tfo6ap" path="res://Main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://dm5jrnxmxnuof" path="res://Ball.tscn" id="2"]
 [ext_resource type="Texture2D" uid="uid://dkq1swbmmxmbq" path="res://assets/Bouncy Platform Long.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://dv6rx85s1gy3i" path="res://assets/ballBlue_10.png" id="4_cm0pq"]
 
 [sub_resource type="PhysicsMaterial" id="1"]
 bounce = 0.5
@@ -31,6 +32,9 @@ bounce = 0.5
 
 [sub_resource type="PhysicsMaterial" id="9"]
 bounce = 0.5
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fos0i"]
+radius = 37.1452
 
 [node name="Main" type="Node"]
 script = ExtResource("1")
@@ -131,3 +135,43 @@ texture = ExtResource("3")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WallContainer/Wall6"]
 rotation = 1.5708
 shape = SubResource("2")
+
+[node name="Ball" parent="." instance=ExtResource("2")]
+position = Vector2(332, 137)
+
+[node name="Sprite2D" type="Sprite2D" parent="Ball"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_cm0pq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ball"]
+shape = SubResource("CircleShape2D_fos0i")
+
+[node name="Ball2" parent="." instance=ExtResource("2")]
+position = Vector2(174, 159)
+
+[node name="@Sprite2D@28199" type="Sprite2D" parent="Ball2"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_cm0pq")
+
+[node name="@CollisionShape2D@28200" type="CollisionShape2D" parent="Ball2"]
+shape = SubResource("CircleShape2D_fos0i")
+
+[node name="Ball3" parent="." instance=ExtResource("2")]
+position = Vector2(732, 138)
+
+[node name="_Sprite2D_28199" type="Sprite2D" parent="Ball3"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_cm0pq")
+
+[node name="_CollisionShape2D_28200" type="CollisionShape2D" parent="Ball3"]
+shape = SubResource("CircleShape2D_fos0i")
+
+[node name="Ball4" parent="." instance=ExtResource("2")]
+position = Vector2(850, 177)
+
+[node name="_Sprite2D_28199" type="Sprite2D" parent="Ball4"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_cm0pq")
+
+[node name="_CollisionShape2D_28200" type="CollisionShape2D" parent="Ball4"]
+shape = SubResource("CircleShape2D_fos0i")
