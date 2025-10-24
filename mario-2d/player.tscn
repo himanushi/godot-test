@@ -1,0 +1,44 @@
+[gd_scene load_steps=6 format=3 uid="uid://lpeit2cdgjqm"]
+
+[ext_resource type="Texture2D" uid="uid://bbno0kn8uiaa1" path="res://art/playerGrey_up1.png" id="1_hqtel"]
+[ext_resource type="Texture2D" uid="uid://bu4awk6vm36cq" path="res://art/playerGrey_up2.png" id="2_sweqy"]
+[ext_resource type="Texture2D" uid="uid://g77b8ucd345c" path="res://art/playerGrey_walk1.png" id="3_2hs0m"]
+[ext_resource type="Texture2D" uid="uid://d3wotsskisyls" path="res://art/playerGrey_walk2.png" id="4_1jxqw"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dw050"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_hqtel")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_sweqy")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_2hs0m")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_1jxqw")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[node name="Player" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_dw050")
+animation = &"walk"
+
+[node name="Camera2D" type="Camera2D" parent="."]
