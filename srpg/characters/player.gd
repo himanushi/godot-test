@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 const GRID_SIZE = 64  # マス目のサイズ(ピクセル)
 const MOVE_SPEED = 300.0  # 移動速度
+const SPRITE_OFFSET = Vector2(0, -30)  # スプライト表示用オフセット
 
 var grid_position = Vector2i(0, 0)  # グリッド座標
 var target_position = Vector2.ZERO  # 目標位置
@@ -87,5 +88,5 @@ func can_move_to(grid_pos: Vector2i) -> bool:
 	return true
 
 func grid_to_pixel(grid_pos: Vector2i) -> Vector2:
-	# マスの中心に配置
-	return Vector2(grid_pos.x * GRID_SIZE + GRID_SIZE / 2, grid_pos.y * GRID_SIZE + GRID_SIZE / 2)
+	# マスの中心に配置 + オフセット
+	return Vector2(grid_pos.x * GRID_SIZE + GRID_SIZE / 2.0, grid_pos.y * GRID_SIZE + GRID_SIZE / 2.0) + SPRITE_OFFSET
