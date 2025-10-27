@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cldykh7qxeaic"]
+
+[node name="Field" type="Node2D"]
+
+[node name="GroundLayer" type="TileMapLayer" parent="."]
+
+[node name="GridHighlight" type="Node2D" parent="."]
+
+[node name="Camera2D" type="Node2D" parent="."]
