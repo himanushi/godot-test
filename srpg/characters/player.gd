@@ -4,6 +4,9 @@ const GRID_SIZE = 64  # マス目のサイズ(ピクセル)
 const MOVE_SPEED = 600.0  # 移動速度
 const SPRITE_OFFSET = Vector2(0, -30)  # スプライト表示用オフセット
 
+# クラスの事前読み込み
+const FireMagic = preload("res://magics/fire_magic.gd")
+
 var grid_position = Vector2i(0, 0)  # グリッド座標
 var target_position = Vector2.ZERO  # 目標位置
 var is_moving = false
@@ -16,9 +19,14 @@ var attack_power = 10
 var defense = 5
 var speed = 10
 var move_power = 3
+var max_mp = 50
+var mp = 50
 
 # インベントリ
 var inventory: Inventory
+
+# 魔法
+var fire_magic: FireMagic
 
 @onready var animated_sprite = $AnimatedSprite2D
 
@@ -32,10 +40,18 @@ func _ready():
 	inventory = Inventory.new()
 	add_child(inventory)
 
+	# 魔法初期化
+	fire_magic = FireMagic.new()
+
 func _process(delta):
 	# 店内では入力を受け付けない
 	var shop_interior = get_tree().root.find_child("ShopInterior", true, false)
 	if shop_interior and shop_interior.is_open:
+		return
+
+	# 魔法選択中は入力を受け付けない
+	var magic_selector = get_tree().root.find_child("MagicSelector", true, false)
+	if magic_selector and magic_selector.is_active:
 		return
 
 	# 入力チェック
@@ -55,6 +71,11 @@ func _process(delta):
 
 func check_input():
 	var direction = Vector2i.ZERO
+
+	# 魔法モード - Mキー
+	if Input.is_action_just_pressed("cast_magic"):
+		start_magic_mode()
+		return
 
 	# アイテムメニュー - Iキー
 	if Input.is_action_just_pressed("open_item_menu"):
@@ -192,6 +213,36 @@ func check_shop_entrance():
 func show_player():
 	"""プレイヤーを表示"""
 	visible = true
+
+func start_magic_mode():
+	"""魔法モード開始"""
+	print("魔法モード開始!")
+
+	# MagicSelectorを取得
+	var magic_selector = get_tree().root.find_child("MagicSelector", true, false)
+	if not magic_selector:
+		# なければ作成
+		var field = get_tree().get_first_node_in_group("field")
+		if field:
+			magic_selector = preload("res://magic_selector.gd").new()
+			magic_selector.name = "MagicSelector"
+			field.add_child(magic_selector)
+			magic_selector.magic_cast.connect(_on_magic_cast)
+
+	if magic_selector:
+		magic_selector.start_selection(self, fire_magic)
+
+func _on_magic_cast(target_pos: Vector2i):
+	"""魔法発動"""
+	fire_magic.cast(self, target_pos)
+
+	# 少し待ってからターン終了(エフェクト表示のため)
+	await get_tree().create_timer(0.5).timeout
+
+	# ターン終了
+	var turn_manager = get_tree().get_first_node_in_group("turn_manager")
+	if turn_manager and turn_manager.has_method("process_turn"):
+		turn_manager.process_turn()
 
 func move_to_grid(new_grid_pos: Vector2i):
 	# グリッドの範囲チェック(奥行き5マスまで)
