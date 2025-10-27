@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 const GRID_SIZE = 64  # マス目のサイズ(ピクセル)
-const MOVE_SPEED = 300.0  # 移動速度
+const MOVE_SPEED = 600.0  # 移動速度
 const SPRITE_OFFSET = Vector2(0, -30)  # スプライト表示用オフセット
 
 var grid_position = Vector2i(0, 0)  # グリッド座標
