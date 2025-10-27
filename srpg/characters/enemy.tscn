@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://cenemyuid001"]
+
+[ext_resource type="Script" path="res://characters/enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" uid="uid://cjnmfwvk6bsm5" path="res://assets/enemyWalking_1.png" id="2_enemy1"]
+[ext_resource type="Texture2D" uid="uid://bwkpkf43u0dww" path="res://assets/enemyWalking_2.png" id="3_enemy2"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_enemy"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_enemy1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_enemy2")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 3.0
+}]
+
+[node name="Enemy" type="CharacterBody2D"]
+script = ExtResource("1_enemy")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_enemy")
+animation = &"walk"
