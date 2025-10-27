@@ -17,6 +17,7 @@ var shop_keeper_pos = Vector2i(2, 0)  # 店主の位置(上中央)
 var entrance_pos = Vector2i(2, 4)  # 入口の位置(下中央)
 
 var is_open = false
+var player_scene = preload("res://characters/player.tscn")
 
 func _ready():
 	hide_shop()
@@ -31,6 +32,9 @@ func setup_shop_interior():
 		shop_map.name = "ShopMap"
 		panel.add_child(shop_map)
 		panel.move_child(shop_map, 0)  # 最背面に
+
+	# グリッド描画用
+	shop_map.draw.connect(_draw_shop_grid)
 
 	# TileMapLayerを作成
 	var tile_layer = TileMapLayer.new()
@@ -59,6 +63,19 @@ func setup_shop_interior():
 	# カメラ位置調整
 	shop_map.position = Vector2(50, 50)
 
+func _draw_shop_grid():
+	"""店内グリッド描画"""
+	# グリッド線を描画
+	for y in range(SHOP_HEIGHT + 1):
+		var start = Vector2(0, y * GRID_SIZE)
+		var end = Vector2(SHOP_WIDTH * GRID_SIZE, y * GRID_SIZE)
+		shop_map.draw_line(start, end, Color(1, 1, 1, 0.3), 1.0)
+
+	for x in range(SHOP_WIDTH + 1):
+		var start = Vector2(x * GRID_SIZE, 0)
+		var end = Vector2(x * GRID_SIZE, SHOP_HEIGHT * GRID_SIZE)
+		shop_map.draw_line(start, end, Color(1, 1, 1, 0.3), 1.0)
+
 func show_shop():
 	"""店を表示"""
 	player = get_tree().get_first_node_in_group("player")
@@ -68,17 +85,21 @@ func show_shop():
 	is_open = true
 	panel.visible = true
 
-	# 店内プレイヤーを作成
+	# 店内プレイヤーを作成(プレイヤーシーンを使用)
 	if not shop_player:
-		shop_player = ColorRect.new()
+		shop_player = player_scene.instantiate()
 		shop_player.name = "ShopPlayer"
-		shop_player.custom_minimum_size = Vector2(40, 60)
-		shop_player.color = Color(0, 1, 0)  # 緑
+		# プレイヤーの入力を無効化
+		shop_player.set_process(false)
 		shop_map.add_child(shop_player)
 
 	# 入口に配置
-	shop_player.position = Vector2(entrance_pos.x * GRID_SIZE + 12, entrance_pos.y * GRID_SIZE + 2)
+	var pixel_pos = Vector2(entrance_pos.x * GRID_SIZE + GRID_SIZE / 2.0, entrance_pos.y * GRID_SIZE + GRID_SIZE / 2.0)
+	shop_player.position = pixel_pos
 	shop_player.visible = true
+
+	# グリッド描画
+	shop_map.queue_redraw()
 
 func hide_shop():
 	"""店を非表示"""
@@ -117,8 +138,8 @@ func move_shop_player(direction: Vector2i):
 
 	# 現在位置を計算
 	var current_pos = Vector2i(
-		int((shop_player.position.x - 12) / GRID_SIZE),
-		int((shop_player.position.y - 2) / GRID_SIZE)
+		int((shop_player.position.x - GRID_SIZE / 2.0) / GRID_SIZE),
+		int((shop_player.position.y - GRID_SIZE / 2.0) / GRID_SIZE)
 	)
 
 	var new_pos = current_pos + direction
@@ -133,7 +154,8 @@ func move_shop_player(direction: Vector2i):
 		return
 
 	# 移動
-	shop_player.position = Vector2(new_pos.x * GRID_SIZE + 12, new_pos.y * GRID_SIZE + 2)
+	var pixel_pos = Vector2(new_pos.x * GRID_SIZE + GRID_SIZE / 2.0, new_pos.y * GRID_SIZE + GRID_SIZE / 2.0)
+	shop_player.position = pixel_pos
 	print("店内移動: ", new_pos)
 
 func is_adjacent_to_shopkeeper() -> bool:
@@ -142,8 +164,8 @@ func is_adjacent_to_shopkeeper() -> bool:
 		return false
 
 	var player_pos = Vector2i(
-		int((shop_player.position.x - 12) / GRID_SIZE),
-		int((shop_player.position.y - 2) / GRID_SIZE)
+		int((shop_player.position.x - GRID_SIZE / 2.0) / GRID_SIZE),
+		int((shop_player.position.y - GRID_SIZE / 2.0) / GRID_SIZE)
 	)
 
 	var distance = abs(player_pos.x - shop_keeper_pos.x) + abs(player_pos.y - shop_keeper_pos.y)
