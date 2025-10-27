@@ -87,4 +87,5 @@ func can_move_to(grid_pos: Vector2i) -> bool:
 	return true
 
 func grid_to_pixel(grid_pos: Vector2i) -> Vector2:
-	return Vector2(grid_pos.x * GRID_SIZE, grid_pos.y * GRID_SIZE)
+	# マスの中心に配置
+	return Vector2(grid_pos.x * GRID_SIZE + GRID_SIZE / 2, grid_pos.y * GRID_SIZE + GRID_SIZE / 2)
