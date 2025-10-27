@@ -5,6 +5,7 @@ const GRID_DEPTH = 5  # 奥行き
 
 @onready var grid_highlight = $GridHighlight
 @onready var ground_layer = $GroundLayer
+@onready var overlay_layer = $OverlayLayer
 
 var hole_positions = []  # 穴の位置を記録
 var shop_positions = []  # 店の位置を記録
@@ -31,6 +32,7 @@ func spawn_shops():
 			var cell_id = ground_layer.get_cell_source_id(Vector2i(x, shop_y))
 			if cell_id != -1:
 				shop_positions.append(Vector2i(x, shop_y))
+				overlay_layer.set_cell(Vector2i(x, shop_y), 0, Vector2i(1, 0))  # 青(店)タイル
 
 func spawn_enemies():
 	# 敵を配置(10~90の範囲でランダムに10体)
@@ -98,23 +100,14 @@ func generate_tiles(start_x: int, end_x: int):
 				var tile_y = randi_range(0, 3)
 				ground_layer.set_cell(Vector2i(x, y), 0, Vector2i(tile_x, tile_y))
 			else:
-				# 穴の位置を記録
+				# 穴の位置を記録して、オーバーレイに赤タイル配置
 				hole_positions.append(Vector2i(x, y))
+				overlay_layer.set_cell(Vector2i(x, y), 0, Vector2i(0, 0))  # 赤(穴)タイル
 
 		# 次の列のために記録
 		previous_tiles = tiles_to_place
 
 func _draw():
-	# 穴を赤く塗る
-	for hole_pos in hole_positions:
-		var rect = Rect2(hole_pos.x * GRID_SIZE, hole_pos.y * GRID_SIZE, GRID_SIZE, GRID_SIZE)
-		draw_rect(rect, Color(0.8, 0.2, 0.2, 0.5))  # 赤色、半透明
-
-	# 店を青く塗る
-	for shop_pos in shop_positions:
-		var rect = Rect2(shop_pos.x * GRID_SIZE, shop_pos.y * GRID_SIZE, GRID_SIZE, GRID_SIZE)
-		draw_rect(rect, Color(0.2, 0.5, 1.0, 0.7))  # 青色、半透明
-
 	# グリッド線を描画
 	for y in range(GRID_DEPTH + 1):
 		var start = Vector2(0, y * GRID_SIZE)
