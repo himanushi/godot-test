@@ -7,16 +7,30 @@ const GRID_DEPTH = 5  # 奥行き
 @onready var ground_layer = $GroundLayer
 
 var hole_positions = []  # 穴の位置を記録
+var shop_positions = []  # 店の位置を記録
 var enemy_scene = preload("res://characters/enemy.tscn")
 
 func _ready():
+	add_to_group("field")
 	setup_tiles()
+	spawn_shops()
 	spawn_enemies()
 	draw_grid()
 
 func setup_tiles():
 	# 初期タイルを配置(横100マス分)
 	generate_tiles(0, 100)
+
+func spawn_shops():
+	"""店を配置(10マスごとに20%の確率)"""
+	for x in range(10, 100, 10):
+		if randf() < 0.2:  # 20%の確率で店
+			# ランダムなY座標
+			var shop_y = randi_range(0, GRID_DEPTH - 1)
+			# そのマスにタイルがあるかチェック
+			var cell_id = ground_layer.get_cell_source_id(Vector2i(x, shop_y))
+			if cell_id != -1:
+				shop_positions.append(Vector2i(x, shop_y))
 
 func spawn_enemies():
 	# 敵を配置(10~90の範囲でランダムに10体)
@@ -92,6 +106,11 @@ func _draw():
 	for hole_pos in hole_positions:
 		var rect = Rect2(hole_pos.x * GRID_SIZE, hole_pos.y * GRID_SIZE, GRID_SIZE, GRID_SIZE)
 		draw_rect(rect, Color(0.8, 0.2, 0.2, 0.5))  # 赤色、半透明
+
+	# 店を青く塗る
+	for shop_pos in shop_positions:
+		var rect = Rect2(shop_pos.x * GRID_SIZE, shop_pos.y * GRID_SIZE, GRID_SIZE, GRID_SIZE)
+		draw_rect(rect, Color(0.2, 0.5, 1.0, 0.7))  # 青色、半透明
 
 	# グリッド線を描画
 	for y in range(GRID_DEPTH + 1):
