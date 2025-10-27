@@ -17,6 +17,9 @@ var defense = 5
 var speed = 10
 var move_power = 3
 
+# インベントリ
+var inventory: Inventory
+
 @onready var animated_sprite = $AnimatedSprite2D
 
 func _ready():
@@ -24,6 +27,10 @@ func _ready():
 	position = grid_to_pixel(grid_position)
 	target_position = position
 	animated_sprite.play("idle")
+
+	# インベントリ初期化
+	inventory = Inventory.new()
+	add_child(inventory)
 
 func _process(delta):
 	# 入力チェック
@@ -43,6 +50,16 @@ func _process(delta):
 
 func check_input():
 	var direction = Vector2i.ZERO
+
+	# アイテムメニュー - Iキー
+	if Input.is_action_just_pressed("open_item_menu"):
+		open_item_menu()
+		return
+
+	# 足踏み(待機) - Zキーまたは.(ピリオド)
+	if Input.is_action_just_pressed("wait_turn"):
+		wait_turn()
+		return
 
 	# 攻撃モード(スペースキー押下中)
 	if Input.is_action_pressed("ui_accept"):
@@ -130,6 +147,28 @@ func perform_attack_animation(direction: Vector2i):
 	var tween = create_tween()
 	tween.tween_property(self, "position", push_pos, 0.1)
 	tween.tween_property(self, "position", original_pos, 0.1)
+
+func wait_turn():
+	"""足踏み(待機) - その場でターン終了"""
+	print("足踏み")
+	# ターン終了処理
+	var battle_manager = get_tree().get_first_node_in_group("battle_manager")
+	if battle_manager:
+		battle_manager.end_turn(self)
+	else:
+		# battle_managerがない場合はturn_managerを使用
+		var turn_manager = get_tree().get_first_node_in_group("turn_manager")
+		if turn_manager and turn_manager.has_method("process_turn"):
+			turn_manager.process_turn()
+
+func open_item_menu():
+	"""アイテムメニューを開く"""
+	var item_menu = get_tree().get_first_node_in_group("item_menu")
+	if not item_menu:
+		# ItemMenuノードを探す
+		item_menu = get_tree().root.find_child("ItemMenu", true, false)
+	if item_menu and item_menu.has_method("show_menu"):
+		item_menu.show_menu()
 
 func move_to_grid(new_grid_pos: Vector2i):
 	# グリッドの範囲チェック(奥行き5マスまで)
