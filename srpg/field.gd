@@ -15,9 +15,17 @@ var enemy_scene = preload("res://characters/enemy.tscn")
 var loaded_chunks = {}  # チャンクの辞書 {chunk_id: true}
 var rightmost_chunk = -1  # 最も右のチャンクID
 var previous_tiles = []  # 前の列のタイル情報
+var world_seed = 0  # ワールドシード値
+var rng = RandomNumberGenerator.new()  # 専用RNG
 
 func _ready():
 	add_to_group("field")
+
+	# シード値設定(固定値または現在時刻)
+	world_seed = 12345  # ここを変えると別のマップになる
+	rng.seed = world_seed
+	print("ワールドシード: ", world_seed)
+
 	# 初期タイル情報(最初の列は全部タイル)
 	for y in range(GRID_DEPTH):
 		previous_tiles.append(true)
@@ -81,8 +89,8 @@ func spawn_shops_in_range(start_x: int, end_x: int):
 	"""指定範囲に店を配置(10マスごとに20%の確率)"""
 	var first_shop_x = ceili(start_x / 10.0) * 10
 	for x in range(first_shop_x, end_x, 10):
-		if randf() < 0.2:  # 20%の確率で店
-			var shop_y = randi_range(0, GRID_DEPTH - 1)
+		if rng.randf() < 0.2:  # 20%の確率で店
+			var shop_y = rng.randi_range(0, GRID_DEPTH - 1)
 			var cell_id = ground_layer.get_cell_source_id(Vector2i(x, shop_y))
 			if cell_id != -1:
 				shop_positions.append(Vector2i(x, shop_y))
@@ -90,10 +98,10 @@ func spawn_shops_in_range(start_x: int, end_x: int):
 
 func spawn_enemies_in_range(start_x: int, end_x: int):
 	"""指定範囲に敵を配置(チャンクあたり2~4体)"""
-	var enemy_count = randi_range(2, 4)
+	var enemy_count = rng.randi_range(2, 4)
 	for i in range(enemy_count):
-		var enemy_x = randi_range(start_x, end_x - 1)
-		var enemy_y = randi_range(0, GRID_DEPTH - 1)
+		var enemy_x = rng.randi_range(start_x, end_x - 1)
+		var enemy_y = rng.randi_range(0, GRID_DEPTH - 1)
 
 		var cell_id = ground_layer.get_cell_source_id(Vector2i(enemy_x, enemy_y))
 		if cell_id == -1:
@@ -122,7 +130,7 @@ func generate_tiles(start_x: int, end_x: int):
 
 		# 各マスでタイル配置判定
 		for y in range(GRID_DEPTH):
-			if randf() < 0.15:  # 15%の確率で穴
+			if rng.randf() < 0.15:  # 15%の確率で穴
 				tiles_to_place.append(false)
 			else:
 				tiles_to_place.append(true)
@@ -142,15 +150,15 @@ func generate_tiles(start_x: int, end_x: int):
 					valid_positions.append(y)
 
 			if valid_positions.size() > 0:
-				var connect_y = valid_positions[randi() % valid_positions.size()]
+				var connect_y = valid_positions[rng.randi() % valid_positions.size()]
 				tiles_to_place[connect_y] = true
 
 		# タイルを配置
 		for y in range(GRID_DEPTH):
 			if tiles_to_place[y]:
 				# ランダムなタイル座標を選択(4x4のタイルセットから)
-				var tile_x = randi_range(0, 3)
-				var tile_y = randi_range(0, 3)
+				var tile_x = rng.randi_range(0, 3)
+				var tile_y = rng.randi_range(0, 3)
 				ground_layer.set_cell(Vector2i(x, y), 0, Vector2i(tile_x, tile_y))
 			else:
 				# 穴の位置を記録して、オーバーレイに赤タイル配置
