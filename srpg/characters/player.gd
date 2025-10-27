@@ -12,6 +12,7 @@ var grid_position = Vector2i(0, 0)  # グリッド座標
 var target_position = Vector2.ZERO  # 目標位置
 var is_moving = false
 var move_direction = Vector2i.ZERO  # 現在の移動方向
+var last_horizontal_direction = 1  # 最後の左右方向(1=右, -1=左)
 
 # ステータス
 var max_hp = 100
@@ -130,18 +131,24 @@ func check_input():
 	# 通常移動
 	if Input.is_action_pressed("ui_right"):
 		direction = Vector2i(1, 0)
+		last_horizontal_direction = 1
 		animated_sprite.play("right_run")
 		animated_sprite.flip_h = false
 	elif Input.is_action_pressed("ui_left"):
 		direction = Vector2i(-1, 0)
+		last_horizontal_direction = -1
 		animated_sprite.play("right_run")
 		animated_sprite.flip_h = true
 	elif Input.is_action_pressed("ui_down"):
 		direction = Vector2i(0, 1)
-		animated_sprite.play("idle")
+		# 上下移動時も走りアニメーション、向きは最後の左右を使用
+		animated_sprite.play("right_run")
+		animated_sprite.flip_h = (last_horizontal_direction == -1)
 	elif Input.is_action_pressed("ui_up"):
 		direction = Vector2i(0, -1)
-		animated_sprite.play("idle")
+		# 上下移動時も走りアニメーション、向きは最後の左右を使用
+		animated_sprite.play("right_run")
+		animated_sprite.flip_h = (last_horizontal_direction == -1)
 	else:
 		animated_sprite.play("idle")
 
