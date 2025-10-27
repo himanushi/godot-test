@@ -336,4 +336,5 @@ func take_damage(damage: int):
 func die():
 	"""死亡処理"""
 	print(name, " は倒れた...")
-	# TODO: 死亡アニメーション
+	# シーンをリロードして最初からやり直し
+	get_tree().reload_current_scene()
