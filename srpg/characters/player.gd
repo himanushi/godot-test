@@ -65,9 +65,26 @@ func move_to_grid(new_grid_pos: Vector2i):
 	if new_grid_pos.x < 0:
 		return
 
+	# 地形判定
+	if not can_move_to(new_grid_pos):
+		return
+
 	grid_position = new_grid_pos
 	target_position = grid_to_pixel(grid_position)
 	is_moving = true
+
+func can_move_to(grid_pos: Vector2i) -> bool:
+	# フィールドのGroundLayerから地形チェック
+	var field = get_tree().get_first_node_in_group("field")
+	if field and field.has_node("GroundLayer"):
+		var ground_layer = field.get_node("GroundLayer")
+		var cell_source_id = ground_layer.get_cell_source_id(grid_pos)
+		# タイルがない場所(-1)は移動不可
+		if cell_source_id == -1:
+			print("移動不可: ", grid_pos, " タイルなし")
+			return false
+		print("移動可能: ", grid_pos)
+	return true
 
 func grid_to_pixel(grid_pos: Vector2i) -> Vector2:
 	return Vector2(grid_pos.x * GRID_SIZE, grid_pos.y * GRID_SIZE)
