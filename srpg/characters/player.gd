@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends Node2D
 
 const GRID_SIZE = 64  # マス目のサイズ(ピクセル)
 const MOVE_SPEED = 600.0  # 移動速度
@@ -28,8 +28,10 @@ func _process(delta):
 		if position.distance_to(target_position) < 1.0:
 			position = target_position
 			is_moving = false
-			# 移動完了後、キーが押されていれば次のマスへ
-			check_input()
+			# ターン処理を実行
+			var turn_manager = get_tree().get_first_node_in_group("turn_manager")
+			if turn_manager and turn_manager.has_method("process_turn"):
+				turn_manager.process_turn()
 
 func check_input():
 	var direction = Vector2i.ZERO
@@ -84,7 +86,15 @@ func can_move_to(grid_pos: Vector2i) -> bool:
 		if cell_source_id == -1:
 			print("移動不可: ", grid_pos, " タイルなし")
 			return false
-		print("移動可能: ", grid_pos)
+
+	# 敵がいるマスは移動不可
+	var enemies = get_tree().get_nodes_in_group("enemies")
+	for enemy in enemies:
+		if enemy.grid_position == grid_pos:
+			print("移動不可: ", grid_pos, " 敵がいる")
+			return false
+
+	print("移動可能: ", grid_pos)
 	return true
 
 func grid_to_pixel(grid_pos: Vector2i) -> Vector2:
