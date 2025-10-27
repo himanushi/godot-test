@@ -287,6 +287,11 @@ func move_to_grid(new_grid_pos: Vector2i):
 	target_position = grid_to_pixel(grid_position)
 	is_moving = true
 
+	# フィールドに新しいチャンク生成を依頼
+	var field = get_tree().get_first_node_in_group("field")
+	if field and field.has_method("check_and_generate_chunks"):
+		field.check_and_generate_chunks(grid_position.x)
+
 	# 店の入口チェック
 	check_shop_entrance()
 
