@@ -18,7 +18,7 @@ animations = [{
 "speed": 3.0
 }]
 
-[node name="Enemy" type="CharacterBody2D"]
+[node name="Enemy" type="Node2D" groups=["enemies"]]
 script = ExtResource("1_enemy")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
