@@ -6,6 +6,7 @@ const SPRITE_OFFSET = Vector2(0, -30)  # スプライト表示用オフセット
 
 # クラスの事前読み込み
 const FireMagic = preload("res://magics/fire_magic.gd")
+const SpriteLoader = preload("res://sprite_loader.gd")
 
 var grid_position = Vector2i(0, 0)  # グリッド座標
 var target_position = Vector2.ZERO  # 目標位置
@@ -36,12 +37,30 @@ func _ready():
 	target_position = position
 	animated_sprite.play("idle")
 
+	# スプライトの背景を透明化
+	apply_sprite_transparency()
+
 	# インベントリ初期化
 	inventory = Inventory.new()
 	add_child(inventory)
 
 	# 魔法初期化
 	fire_magic = FireMagic.new()
+
+func apply_sprite_transparency():
+	"""スプライトの背景色を透明化"""
+	if animated_sprite and animated_sprite.sprite_frames:
+		# 茶色の背景を透明に
+		var bg_color = Color(0.545, 0.42, 0.29, 1.0)
+
+		# 全アニメーションに適用
+		var animations = animated_sprite.sprite_frames.get_animation_names()
+		for anim_name in animations:
+			SpriteLoader.apply_transparency_to_sprite_frames(
+				animated_sprite.sprite_frames,
+				anim_name,
+				bg_color
+			)
 
 func _process(delta):
 	# 店内では入力を受け付けない
