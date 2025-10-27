@@ -93,7 +93,10 @@ func generate_tiles(start_x: int, end_x: int):
 		# タイルを配置
 		for y in range(GRID_DEPTH):
 			if tiles_to_place[y]:
-				ground_layer.set_cell(Vector2i(x, y), 0, Vector2i(0, 0))
+				# ランダムなタイル座標を選択(4x4のタイルセットから)
+				var tile_x = randi_range(0, 3)
+				var tile_y = randi_range(0, 3)
+				ground_layer.set_cell(Vector2i(x, y), 0, Vector2i(tile_x, tile_y))
 			else:
 				# 穴の位置を記録
 				hole_positions.append(Vector2i(x, y))
