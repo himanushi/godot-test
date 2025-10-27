@@ -7,14 +7,32 @@ const GRID_DEPTH = 5  # 奥行き
 @onready var ground_layer = $GroundLayer
 
 var hole_positions = []  # 穴の位置を記録
+var enemy_scene = preload("res://characters/enemy.tscn")
 
 func _ready():
 	setup_tiles()
+	spawn_enemies()
 	draw_grid()
 
 func setup_tiles():
 	# 初期タイルを配置(横100マス分)
 	generate_tiles(0, 100)
+
+func spawn_enemies():
+	# 敵を配置(10~90の範囲でランダムに10体)
+	for i in range(10):
+		var enemy_x = randi_range(10, 90)
+		var enemy_y = randi_range(0, GRID_DEPTH - 1)
+
+		# そのマスにタイルがあるかチェック
+		var cell_id = ground_layer.get_cell_source_id(Vector2i(enemy_x, enemy_y))
+		if cell_id == -1:
+			continue  # 穴なのでスキップ
+
+		# 敵を生成
+		var enemy = enemy_scene.instantiate()
+		add_child(enemy)
+		enemy.set_grid_position(Vector2i(enemy_x, enemy_y))
 
 func generate_tiles(start_x: int, end_x: int):
 	# 指定範囲のタイルを自動生成
