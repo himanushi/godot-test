@@ -19,9 +19,7 @@ func _ready():
 
 	# 販売アイテムを設定
 	shop_items = [
-		AttackPotion.new(),
-		AttackPotion.new(),
-		AttackPotion.new(),
+		HpPotion.new(),
 	]
 
 func show_menu():
@@ -52,7 +50,7 @@ func _on_item_activated(index: int):
 		var item = shop_items[index]
 		if player and player.inventory:
 			# アイテムを複製して渡す
-			var new_item = AttackPotion.new()  # TODO: 動的に生成
+			var new_item = HpPotion.new()
 			player.inventory.add_item(new_item)
 			print("アイテムを入手: ", item.item_name)
 
