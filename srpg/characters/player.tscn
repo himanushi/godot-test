@@ -1,5 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://bprsxgrqv27my"]
+[gd_scene load_steps=8 format=3 uid="uid://bprsxgrqv27my"]
 
+[ext_resource type="Script" path="res://characters/player.gd" id="1_v5x5v"]
 [ext_resource type="Texture2D" uid="uid://bbno0kn8uiaa1" path="res://assets/playerGrey_up1.png" id="1_x0jl3"]
 [ext_resource type="Texture2D" uid="uid://bu4awk6vm36cq" path="res://assets/playerGrey_up2.png" id="2_evndh"]
 [ext_resource type="Texture2D" uid="uid://g77b8ucd345c" path="res://assets/playerGrey_walk1.png" id="3_h1q25"]
@@ -43,6 +44,7 @@ radius = 54.0
 height = 136.0
 
 [node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_v5x5v")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_vcy1y")
