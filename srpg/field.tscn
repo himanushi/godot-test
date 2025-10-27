@@ -1,6 +1,9 @@
-[gd_scene format=3 uid="uid://cldykh7qxeaic"]
+[gd_scene load_steps=2 format=3 uid="uid://cldykh7qxeaic"]
+
+[ext_resource type="Script" path="res://field.gd" id="1_aaaaa"]
 
 [node name="Field" type="Node2D"]
+script = ExtResource("1_aaaaa")
 
 [node name="GroundLayer" type="TileMapLayer" parent="."]
 
