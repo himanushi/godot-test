@@ -1,11 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://bldqa2u8axvm2"]
+[gd_scene load_steps=5 format=3 uid="uid://bldqa2u8axvm2"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_main"]
+[ext_resource type="Script" path="res://turn_manager.gd" id="1_turn"]
 [ext_resource type="PackedScene" uid="uid://cldykh7qxeaic" path="res://field.tscn" id="1_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://bprsxgrqv27my" path="res://characters/player.tscn" id="2_0xm2m"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
+
+[node name="TurnManager" type="Node" parent="." groups=["turn_manager"]]
+script = ExtResource("1_turn")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(0, 300)
@@ -16,4 +20,4 @@ position = Vector2(0, 300)
 [node name="Characters" type="Node2D" parent="."]
 position = Vector2(0, 300)
 
-[node name="Player" parent="Characters" instance=ExtResource("2_0xm2m")]
+[node name="Player" parent="Characters" groups=["player"] instance=ExtResource("2_0xm2m")]
