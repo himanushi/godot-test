@@ -33,6 +33,11 @@ func _ready():
 	add_child(inventory)
 
 func _process(delta):
+	# 店内では入力を受け付けない
+	var shop_interior = get_tree().root.find_child("ShopInterior", true, false)
+	if shop_interior and shop_interior.is_open:
+		return
+
 	# 入力チェック
 	if not is_moving:
 		check_input()
@@ -170,6 +175,24 @@ func open_item_menu():
 	if item_menu and item_menu.has_method("show_menu"):
 		item_menu.show_menu()
 
+func check_shop_entrance():
+	"""店の入口にいるかチェック"""
+	var field = get_tree().get_first_node_in_group("field")
+	if field and "shop_positions" in field:
+		for shop_pos in field.shop_positions:
+			if grid_position == shop_pos:
+				# 店に入る
+				var shop_interior = get_tree().root.find_child("ShopInterior", true, false)
+				if shop_interior and shop_interior.has_method("show_shop"):
+					# メインフィールドのプレイヤーを非表示
+					visible = false
+					shop_interior.show_shop()
+				break
+
+func show_player():
+	"""プレイヤーを表示"""
+	visible = true
+
 func move_to_grid(new_grid_pos: Vector2i):
 	# グリッドの範囲チェック(奥行き5マスまで)
 	if new_grid_pos.y < 0 or new_grid_pos.y >= 5:
@@ -186,6 +209,9 @@ func move_to_grid(new_grid_pos: Vector2i):
 	grid_position = new_grid_pos
 	target_position = grid_to_pixel(grid_position)
 	is_moving = true
+
+	# 店の入口チェック
+	check_shop_entrance()
 
 func can_move_to(grid_pos: Vector2i) -> bool:
 	# フィールドのGroundLayerから地形チェック
