@@ -121,8 +121,8 @@ func die():
 func perform_attack_animation(direction: Vector2i):
 	"""攻撃アニメーション: 少し前に移動"""
 	var push_distance = 16  # 移動距離(ピクセル)
-	var original_pos = position
-	var push_pos = position + Vector2(direction.x * push_distance, direction.y * push_distance)
+	var original_pos = grid_to_pixel(grid_position)  # グリッド座標から正確な位置を計算
+	var push_pos = original_pos + Vector2(direction.x * push_distance, direction.y * push_distance)
 
 	# 前に移動
 	var tween = create_tween()
