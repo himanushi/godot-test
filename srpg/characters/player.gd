@@ -84,10 +84,10 @@ func _process(delta):
 		if position.distance_to(target_position) < 1.0:
 			position = target_position
 			is_moving = false
-			# ターン処理を実行
+			# ターン処理を実行(敵のターンを待つ)
 			var turn_manager = get_tree().get_first_node_in_group("turn_manager")
 			if turn_manager and turn_manager.has_method("process_turn"):
-				turn_manager.process_turn()
+				await turn_manager.process_turn()
 
 func check_input():
 	var direction = Vector2i.ZERO
@@ -177,23 +177,23 @@ func try_attack_direction(direction: Vector2i):
 
 			attack(enemy)
 
-			# ターン終了処理
+			# ターン終了処理(敵のターンを待つ)
 			var battle_manager = get_tree().get_first_node_in_group("battle_manager")
 			if battle_manager:
-				battle_manager.end_turn(self)
+				await battle_manager.end_turn(self)
 			else:
 				# battle_managerがない場合はturn_managerを使用
 				var turn_manager = get_tree().get_first_node_in_group("turn_manager")
 				if turn_manager and turn_manager.has_method("process_turn"):
-					turn_manager.process_turn()
+					await turn_manager.process_turn()
 			return
 	print("攻撃対象がいません")
 
 func perform_attack_animation(direction: Vector2i):
 	"""攻撃アニメーション: 少し前に移動"""
 	var push_distance = 16  # 移動距離(ピクセル)
-	var original_pos = position
-	var push_pos = position + Vector2(direction.x * push_distance, direction.y * push_distance)
+	var original_pos = grid_to_pixel(grid_position)  # グリッド座標から正確な位置を計算
+	var push_pos = original_pos + Vector2(direction.x * push_distance, direction.y * push_distance)
 
 	# 前に移動
 	var tween = create_tween()
@@ -203,15 +203,15 @@ func perform_attack_animation(direction: Vector2i):
 func wait_turn():
 	"""足踏み(待機) - その場でターン終了"""
 	print("足踏み")
-	# ターン終了処理
+	# ターン終了処理(敵のターンを待つ)
 	var battle_manager = get_tree().get_first_node_in_group("battle_manager")
 	if battle_manager:
-		battle_manager.end_turn(self)
+		await battle_manager.end_turn(self)
 	else:
 		# battle_managerがない場合はturn_managerを使用
 		var turn_manager = get_tree().get_first_node_in_group("turn_manager")
 		if turn_manager and turn_manager.has_method("process_turn"):
-			turn_manager.process_turn()
+			await turn_manager.process_turn()
 
 func open_item_menu():
 	"""アイテムメニューを開く"""
@@ -265,10 +265,10 @@ func _on_magic_cast(target_pos: Vector2i):
 	# 少し待ってからターン終了(エフェクト表示のため)
 	await get_tree().create_timer(0.5).timeout
 
-	# ターン終了
+	# ターン終了(敵のターンを待つ)
 	var turn_manager = get_tree().get_first_node_in_group("turn_manager")
 	if turn_manager and turn_manager.has_method("process_turn"):
-		turn_manager.process_turn()
+		await turn_manager.process_turn()
 
 func move_to_grid(new_grid_pos: Vector2i):
 	# グリッドの範囲チェック(奥行き5マスまで)
