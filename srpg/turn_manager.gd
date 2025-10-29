@@ -23,7 +23,7 @@ func process_turn():
 	# 全ての敵を順番に動かす
 	var enemies = get_tree().get_nodes_in_group("enemies")
 	for enemy in enemies:
-		if enemy.has_method("take_turn"):
+		if is_instance_valid(enemy) and enemy.has_method("take_turn"):
 			await enemy.take_turn()
 			# 各敵の行動後に少し待機
 			await get_tree().create_timer(0.1).timeout
